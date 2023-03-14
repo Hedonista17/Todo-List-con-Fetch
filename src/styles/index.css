@@ -1,26 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600&display=swap');
 
   body{
-    background-image: url(/workspace/Todo-List-con-Fetch/src/img/Coral Sun.jfif);
+    background: rgb(33,36,36);
+    background: linear-gradient(0deg, rgba(33,36,36,1) 0%, rgba(121, 49, 109, 0.932) 100%);
+    height: 100vh;
+    width: 100vw;
 }
 
+#intro{text-align: left;  
+   text-decoration: underline;
+    font-family: 'Cinzel', serif;}
 
+#input, li{
+  background-color: ghostwhite;
+  font-family: 'Cinzel', serif;}
 
-#intro{text-align: left; 
-    font-family: Arial Black; 
-    font-weight: bold; font-size: 40px; 
-    background: #202020; 
-    -webkit-background-clip: text; 
-    -moz-background-clip: text; 
-    background-clip: text; 
-    color: transparent; 
-    text-shadow: 0px 3px 3px rgba(255,255,255,0.4),0px -1px 1px rgba(0,0,0,0.3);
-    }
+  h3{text-decoration: underline;
+    font-family: 'Cinzel', serif;}
   
+
    #iconoTrash{ float: right;
       color:black;}
    #iconoNOCheck{float: right;
-    color:red;}
+    color:rgb(199, 18, 18);}
     #iconoCheck{float: right;
-      color:green;}
+      color:rgba(71, 170, 71, 0.863);}
+
+    #contador{ color: ghostwhite;
+      font-family: 'Cinzel', serif;}
 
    

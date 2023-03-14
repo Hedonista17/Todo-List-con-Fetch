@@ -10,7 +10,7 @@ const Home = () => {
 	const [inputValue, setInputValue] = useState("");
 	const [tareas, setTareas] = useState([]);
 	const [realizadas, setRealizadas] = useState([]);
-	
+
 	const getListado = () => {
 		fetch(URL, {
 			method: "GET",
@@ -47,7 +47,7 @@ const Home = () => {
 
 
 	useEffect(getListado, [])
-   
+
 
 	const añadirTarea = () => {
 		const datos = { label: inputValue, done: false };
@@ -64,58 +64,62 @@ const Home = () => {
 		getListado();
 
 	}
-	const check = (tarea,indice) => {
+	const check = (tarea, indice) => {
 		tarea.done = true;                          //1º modifico a true la key
 		setRealizadas([...realizadas, tarea]);      //2º al state realizadas que empieza en  [] le paso esta tarea chekeada
 		setTareas(tareas.filter((tareaIncompleta) => tareaIncompleta[indice] !== tarea[indice])); //3º filtro las tareas realizadas para quitarla de pendientes
 		putTareas([...tareas]);
 		getListado();
 	}
-	
+
 
 	return ( // poner debajo de lalinea 58 el loading 
 
 		<div className="container">
 			<div className="row">
 				< Intro />
-				<input type="text" value={inputValue}
-						onChange={(element) => setInputValue(element.target.value)}
-						onKeyDown={(e) => { // en React este paramentro representa el evento de tecla y key es el tipo de tecla 
-							if (e.key === "Enter" && inputValue.length >= 2) {
-								añadirTarea()
-								setInputValue(" ")
-							}
+
+				<div  className="input-group flex-nowrap">
+				<input id="input" className="form-control"type="text" value={inputValue}
+					onChange={(element) => setInputValue(element.target.value)}
+					onKeyDown={(e) => { // en React este paramentro representa el evento de tecla y key es el tipo de tecla 
+						if (e.key === "Enter" && inputValue.length >= 2) {
+							añadirTarea()
+							setInputValue(" ")
 						}
-						}
-						placeholder="Escribe tus tareas pendientes " />
+					}
+					}
+					placeholder="Escribe tus tareas pendientes " />
+				</div>
+				
 				<div className="col-6 my-5">
-					 <h3> Tareas Pendientes</h3>
+					<h3> 🕀  Tareas Pendientes 🕀 </h3>
 
 					<ul className="list-group">
-                        {tareas.map((tarea, index) => (
+						{tareas.map((tarea, index) => (
 							<li key={index} className="list-group-item">
 								{tarea.label}
 								<i id="iconoTrash" className="fa-solid fa-trash fa-lg mx-4 mt-2" onClick={borrarTarea}></i>
-								<i id="iconoNOCheck" className="fa-solid fa-check-to-slot fa-lg  mt-2" onClick={() => check(tarea, index)}></i>
+								<i id="iconoNOCheck" className="fa-regular fa-circle-check fa-xl  mt-2" onClick={() => check(tarea, index)}></i>
 							</li>
 						))}
 					</ul>
-					<div className="mx-3" id="contador"> {tareas.length == 1 ? tareas.length + " tarea por realizar " : tareas.length + " tareas por realizar "} </div>
+					<div className="mx-3 my-3" id="contador"> {tareas.length == 1 ? tareas.length + " tarea por realizar 💀 " : tareas.length + " tareas por realizar 💀 "} </div>
 				</div>
-                
-				<div className="col-6 my-5">
-				<h3> Tareas Realizadas</h3>
 
-				<ul className="list-group">
+				<div className="col-6 my-5">
+					<h3> 🕀 Tareas Realizadas 🕀 </h3>
+
+					<ul className="list-group">
 						{realizadas.map((tarea, index) => (
 							<li key={index} className="list-group-item">
 								{tarea.label}
 								<i id="iconoTrash" className="fa-solid fa-trash fa-lg mx-4 mt-2" ></i>
-								<i id="iconoCheck" className="fa-solid fa-check-to-slot fa-lg  mt-2" ></i>
+								<i id="iconoCheck" className="fa-regular fa-circle-check fa-xl  mt-2" ></i>
 							</li>
 						))}
 					</ul>
-					<div className="mx-3" id="contador"> {realizadas.length == 1 ? realizadas.length + " tarea realizada " : realizadas.length + " tareas realizadas "} </div>
+					<div className="mx-3 my-3" id="contador"> {realizadas.length == 1 ? realizadas.length + " tarea realizada 😇 " : realizadas.length + " tareas realizadas 😇 "} </div>
 				</div>
 			</div>
 		</div>
