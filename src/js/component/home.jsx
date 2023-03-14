@@ -9,19 +9,20 @@ const URL = "https://assets.breatheco.de/apis/fake/todos/user/afernandez"
 const Home = () => {
 	const [inputValue, setInputValue] = useState("");
 	const [tareas, setTareas] = useState([]);
-   
-
+	const [realizadas, setRealizadas] = useState([]);
+	
 	const getListado = () => {
 		fetch(URL, {
 			method: "GET",
 			headers: { "Content-Type": "application/json" }
 		})
 			.then((response) => {
-				
+
 				return response.json()
 			})
 			.then((data) => {
-				setTareas(data)
+				const tareasPendientes = data.filter(tarea => tarea.done === false); // traer de BDD solo las que sean false
+				setTareas(tareasPendientes);
 			})
 			.catch((error) => {
 				console.log("error al obtener la informacion", error)
@@ -45,7 +46,8 @@ const Home = () => {
 	}
 
 
-	useEffect( getListado , [])
+	useEffect(getListado, [])
+   
 
 	const añadirTarea = () => {
 		const datos = { label: inputValue, done: false };
@@ -56,49 +58,68 @@ const Home = () => {
 
 	const borrarTarea = (index) => {
 		const datos = [...tareas] // 1º creo una copia de las tareas que ya tengo (array)/estado
-		datos.splice(index,1); //2º metodo filter, devuelve un nuevo array pero eliminando el indice que le indicamos 
+		datos.splice(index, 1); //2º metodo filter, devuelve un nuevo array pero eliminando el indice que le indicamos 
 		setTareas(datos); // ddespues actualizo el estado de las tareas con los nuevos datos
 		putTareas(datos); // meto los datos en el servidor
 		getListado();
 
 	}
-	const check = (indice) => {
-		const datos = { done: true}; //1º el indice para recorrer el array 
-		const tareaLista =[...tareas, datos]; //2º accedo a la key done  y luego lo negamos para ir cambiando true/false
-		putTareas(tareaLista[indice]);
+	const check = (tarea,indice) => {
+		tarea.done = true;                          //1º modifico a true la key
+		setRealizadas([...realizadas, tarea]);      //2º al state realizadas que empieza en  [] le paso esta tarea chekeada
+		setTareas(tareas.filter((tareaIncompleta) => tareaIncompleta[indice] !== tarea[indice])); //3º filtro las tareas realizadas para quitarla de pendientes
+		putTareas([...tareas]);
 		getListado();
 	}
-
+	
 
 	return ( // poner debajo de lalinea 58 el loading 
+
 		<div className="container">
-			< Intro />
-
 			<div className="row">
+				< Intro />
 				<input type="text" value={inputValue}
-					onChange={(element) => setInputValue(element.target.value)}
-					onKeyDown={(e) => { // en React este paramentro representa el evento de tecla y key es el tipo de tecla 
-						if (e.key === "Enter" && inputValue.length >= 2) {
-							añadirTarea()
-							setInputValue(" ")
+						onChange={(element) => setInputValue(element.target.value)}
+						onKeyDown={(e) => { // en React este paramentro representa el evento de tecla y key es el tipo de tecla 
+							if (e.key === "Enter" && inputValue.length >= 2) {
+								añadirTarea()
+								setInputValue(" ")
+							}
 						}
-					}
-					}
-					placeholder="Escribe tus tareas pendientes " />
+						}
+						placeholder="Escribe tus tareas pendientes " />
+				<div className="col-6 my-5">
+					 <h3> Tareas Pendientes</h3>
+
+					<ul className="list-group">
+                        {tareas.map((tarea, index) => (
+							<li key={index} className="list-group-item">
+								{tarea.label}
+								<i id="iconoTrash" className="fa-solid fa-trash fa-lg mx-4 mt-2" onClick={borrarTarea}></i>
+								<i id="iconoNOCheck" className="fa-solid fa-check-to-slot fa-lg  mt-2" onClick={() => check(tarea, index)}></i>
+							</li>
+						))}
+					</ul>
+					<div className="mx-3" id="contador"> {tareas.length == 1 ? tareas.length + " tarea por realizar " : tareas.length + " tareas por realizar "} </div>
+				</div>
+                
+				<div className="col-6 my-5">
+				<h3> Tareas Realizadas</h3>
+
+				<ul className="list-group">
+						{realizadas.map((tarea, index) => (
+							<li key={index} className="list-group-item">
+								{tarea.label}
+								<i id="iconoTrash" className="fa-solid fa-trash fa-lg mx-4 mt-2" ></i>
+								<i id="iconoCheck" className="fa-solid fa-check-to-slot fa-lg  mt-2" ></i>
+							</li>
+						))}
+					</ul>
+					<div className="mx-3" id="contador"> {realizadas.length == 1 ? realizadas.length + " tarea realizada " : realizadas.length + " tareas realizadas "} </div>
+				</div>
 			</div>
-
-			<ul className="list-group">
-				{tareas.map((tarea) => (
-					<li key={tarea.label} className="list-group-item">
-						{tarea.label}
-						<i className="fa-solid fa-trash" onClick={borrarTarea}></i>
-						<i id="iconoCheck" class="fa-solid fa-check-to-slot" onClick={check}></i>
-
-					</li>
-				))}
-			</ul>
-                      
 		</div>
+
 	);
 };
 

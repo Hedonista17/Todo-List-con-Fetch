@@ -16,9 +16,11 @@
     text-shadow: 0px 3px 3px rgba(255,255,255,0.4),0px -1px 1px rgba(0,0,0,0.3);
     }
   
-    i{ float: right;}
+   #iconoTrash{ float: right;
+      color:black;}
+   #iconoNOCheck{float: right;
+    color:red;}
+    #iconoCheck{float: right;
+      color:green;}
 
-    .tarealista{ color: green};
-    .tareanolista{ color:red};
-
-
+   
