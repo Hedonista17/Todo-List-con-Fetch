@@ -21,8 +21,15 @@ const Home = () => {
 				return response.json()
 			})
 			.then((data) => {
+		
 				const tareasPendientes = data.filter(tarea => tarea.done === false); // traer de BDD solo las que sean false
 				setTareas(tareasPendientes);
+				console.log(tareas);
+				
+				const tareasRealizadas = data.filter(tarea => tarea.done === true);
+				setRealizadas( tareasRealizadas)  // X[] + lo que añades  
+				console.log(realizadas);
+
 			})
 			.catch((error) => {
 				console.log("error al obtener la informacion", error)
@@ -67,7 +74,7 @@ const Home = () => {
 	const check = (tarea, indice) => {
 		tarea.done = true;                          //1º modifico a true la key
 		setRealizadas([...realizadas, tarea]);      //2º al state realizadas que empieza en  [] le paso esta tarea chekeada
-		setTareas(tareas.filter((tareaIncompleta) => tareaIncompleta[indice] !== tarea[indice])); //3º filtro las tareas realizadas para quitarla de pendientes
+		setTareas(tareas.filter((tareaIncompleta) => tareaIncompleta.done !== false)); //3º filtro las tareas realizadas para quitarla de pendientes
 		putTareas([...tareas]);
 		getListado();
 	}
