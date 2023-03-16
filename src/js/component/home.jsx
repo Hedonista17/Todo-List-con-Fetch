@@ -14,9 +14,11 @@ const Home = () => {
 	const getListado = async () => {
 
 		try{
-			const response = await fetch(URL)
+			const response = await fetch(URL,{
+				method: "GET",
+				headers: { "Content-Type": "application/json" }})
 			const data = await response.json
-			return data
+			setTareas(data);
 			
 		} catch(error) { console.log("Error al traer informacion del servidor",error)}
 		
