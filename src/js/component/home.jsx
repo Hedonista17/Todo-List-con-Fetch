@@ -11,29 +11,15 @@ const Home = () => {
 	const [tareas, setTareas] = useState([]);
 	const [realizadas, setRealizadas] = useState([]);
 
-	const getListado = () => {
-		fetch(URL, {
-			method: "GET",
-			headers: { "Content-Type": "application/json" }
-		})
-			.then((response) => {
+	const getListado = async () => {
 
-				return response.json()
-			})
-			.then((data) => {
+		try{
+			const response = await fetch(URL)
+			const data = await response.json
+			return data
+			
+		} catch(error) { console.log("Error al traer informacion del servidor",error)}
 		
-				const tareasPendientes = data.filter(tarea => tarea.done === false); // traer de BDD solo las que sean false
-				setTareas(tareasPendientes);
-				console.log(tareas);
-				
-				const tareasRealizadas = data.filter(tarea => tarea.done === true);
-				setRealizadas( tareasRealizadas)  // X[] + lo que añades  
-				console.log(realizadas);
-
-			})
-			.catch((error) => {
-				console.log("error al obtener la informacion", error)
-			})
 	}
 
 	const putTareas = (newtareas) => {
@@ -44,7 +30,7 @@ const Home = () => {
 		})
 			.then(() => {
 				console.log("tarea enviada");
-				getListado()
+			
 			})
 
 			.catch((error) => {
@@ -53,7 +39,7 @@ const Home = () => {
 	}
 
 
-	useEffect(getListado, [])
+	useEffect(() => getListado(), [])
 
 
 	const añadirTarea = () => {
