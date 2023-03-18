@@ -36,6 +36,7 @@ const Home = () => {
 		;
 	}
 	const putTareas = (newtareas) => {
+		setLoading(true)
 		fetch(URL, {
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
@@ -43,7 +44,7 @@ const Home = () => {
 		})
 			.then(() => {
 				console.log("Tarea enviada con exito: ");
-				//getListado()
+				setLoading(false)
 			})
 
 			.catch((error) => {
@@ -61,18 +62,17 @@ const Home = () => {
 		putTareas(nuevaTarea);
 	}
 
-	const borrarTarea = () => {
-		const datos = [...tareas] // 1º creo una copia de las tareas que ya tengo (array)/estado
-		datos.filter((tarea) => tarea[index] != index[index])
-		putTareas(datos); // meto los datos en el servidor
-
-
+	const borrarTarea = (borrada) => {
+		const tareasFiltradas = tareas.filter( (tarea) => tarea.label !== borrada) // por cada tarea si no coincide con la borrada (que nunca coincide) devuelve un array nuevo, eliminando a la que yo le doy click
+		setTareas(tareasFiltradas);
+		putTareas(tareasFiltradas) // nota : estoy borrando por el label pero debe haber otra forma por q si dos tareas se llaman igual se borran las dos 
 	}
-	const check = (tarea, indice) => {
-		const datos = tarea.done = true;                          //1º modifico a true la key
-		setRealizadas([...realizadas, datos]);      //2º al state realizadas que empieza en  [] le paso esta tarea chekeada
-		setTareas(tareas.filter((tareaIncompleta) => tareaIncompleta.done !== false)); //3º filtro las tareas realizadas para quitarla de pendientes
-		putTareas([...tareas]);
+	const check =  (indice) => {
+		const tareasCompletadas = [...tareas]
+		tareasCompletadas[indice].done = true;
+		putTareas(tareasCompletadas) // no es asincrono, como tarda mas en enviar que en cargar por eso me las muestra en vacio cuando le hago el check 
+		setRealizadas([...realizadas, tareasCompletadas])
+		setTareas(tareas.filter((tareaIncompleta) => tareaIncompleta.done !== false))
 
 	}
 
@@ -87,7 +87,7 @@ const Home = () => {
 					<input id="input" className="form-control" type="text" value={inputValue}
 						onChange={(element) => setInputValue(element.target.value)}
 						onKeyDown={(e) => { // en React este paramentro representa el evento de tecla y key es el tipo de tecla 
-							if (e.key === "Enter" && inputValue.length >= 2) {
+							if (e.key === "Enter" && inputValue.length >= 3) {
 								añadirTarea()
 								setInputValue(" ")
 							}
@@ -106,8 +106,8 @@ const Home = () => {
 						{tareas.map((tarea, index) => (
 							<li key={tarea.label} className="list-group-item">
 								{tarea.label}
-								<i title="Borrar" id="iconoTrash" className="fa-solid fa-trash fa-lg mx-4 mt-2" onClick={borrarTarea}></i>
-								<i title="Marcar como Realizada" id="iconoNOCheck" className="fa-regular fa-circle-check fa-xl  mt-2" onClick={() => check(tarea, index)}></i>
+								<i title="Borrar" id="iconoTrash" className="fa-solid fa-trash fa-lg mx-4 mt-2" onClick={() => borrarTarea(tarea.label)}></i>
+								<i title="Marcar como Realizada" id="iconoNOCheck" className="fa-regular fa-circle-check fa-xl  mt-2" onClick={() => check(index)}></i>
 							</li>
 						))}
 					</ul>)}
@@ -121,8 +121,8 @@ const Home = () => {
 					<ul className="list-group">
 						{realizadas.map((tarea, index) => (
 							<li key={index} className="list-group-item">
-								{tarea.label}
-								<i id="iconoTrash" className="fa-solid fa-trash fa-lg mx-4 mt-2" ></i>
+								{tarea.label}  
+								<i id="iconoTrash" className="fa-solid fa-trash fa-lg mx-4 mt-2" onClick={() => borrarTarea(tarea.label)} ></i>
 								<i title="Tarea Completada" id="iconoCheck" className="fa-regular fa-circle-check fa-xl  mt-2" ></i>
 							</li>
 						))}
