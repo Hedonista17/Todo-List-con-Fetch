@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600&display=swap');
 
   body{
-    background: rgb(33,36,36);
-    background: linear-gradient(0deg, rgba(33,36,36,1) 0%, rgba(121, 49, 109, 0.932) 100%);
+    background: rgb(117, 115, 226);
+    background: radial-gradient(circle, rgb(100, 98, 216) 0%, rgba(148,187,233,1) 100%);
     height: 100vh;
     width: 100vw;
 }
@@ -20,11 +20,11 @@
   
 
    #iconoTrash{ float: right;
-      color:black;}
+      color:rgba(0, 0, 0, 0.575);}
    #iconoNOCheck{float: right;
-    color:rgb(199, 18, 18);}
+    color:#FF5353;}
     #iconoCheck{float: right;
-      color:rgba(71, 170, 71, 0.863);}
+      color:#47DA99;}
 
     #contador{ color: ghostwhite;
       font-family: 'Cinzel', serif;}

@@ -9,7 +9,6 @@ const URL = "https://assets.breatheco.de/apis/fake/todos/user/afernandez"
 const Home = () => {
 	const [inputValue, setInputValue] = useState("");
 	const [tareas, setTareas] = useState([]);
-	const [realizadas, setRealizadas] = useState([]);
 	const [loading, setLoading] = useState(false);
 
 	const getListado = () => {
@@ -22,13 +21,11 @@ const Home = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				;
+		
 				console.log("Tarea recibida con exito: ", data);
-				data.map((check) => {
-					if (check.done === true) setRealizadas(realizadas.concat(check))
-					else setTareas(tareas.concat(data))
-					setLoading(false)
-				})
+				setTareas(data)
+				setLoading(false)
+			
 			})
 			.catch((error) => {
 				console.error("Error al comprobar informacion del servidor:", error);
@@ -44,11 +41,12 @@ const Home = () => {
 		})
 			.then(() => {
 				console.log("Tarea enviada con exito: ");
+				getListado()
 				setLoading(false)
 			})
 
 			.catch((error) => {
-				console.log("error de envio ", error);
+				console.log("Error de envio ", error);
 			});
 	}
 
@@ -62,18 +60,15 @@ const Home = () => {
 		putTareas(nuevaTarea);
 	}
 
-	const borrarTarea = (borrada) => {
-		const tareasFiltradas = tareas.filter( (tarea) => tarea.label !== borrada) // por cada tarea si no coincide con la borrada (que nunca coincide) devuelve un array nuevo, eliminando a la que yo le doy click
-		setTareas(tareasFiltradas);
-		putTareas(tareasFiltradas) // nota : estoy borrando por el label pero debe haber otra forma por q si dos tareas se llaman igual se borran las dos 
+	const borrarTarea = (index) => {
+		const newTodo = [...tareas] // si es array u objeto spread operator para poder trabajar sobre esa variable
+		newTodo.splice(index,1) // metodo splice 
+		putTareas(newTodo)  // put al postman  --no se setea por uqe va inplicito en el put el metodo get // setTareas()
 	}
 	const check =  (indice) => {
 		const tareasCompletadas = [...tareas]
 		tareasCompletadas[indice].done = true;
 		putTareas(tareasCompletadas) // no es asincrono, como tarda mas en enviar que en cargar por eso me las muestra en vacio cuando le hago el check 
-		setRealizadas([...realizadas, tareasCompletadas])
-		setTareas(tareas.filter((tareaIncompleta) => tareaIncompleta.done !== false))
-
 	}
 
 
@@ -98,7 +93,7 @@ const Home = () => {
 
 				<div className="col-6 my-5">
 
-					<h3> 🕀  Tareas Pendientes 🕀 </h3>
+					<h3> Tareas Pendientes  </h3>
 					{loading ? (<div className="d-flex align-items-center text-light">
 						<strong>Cargando...</strong>
 						<div className="spinner-border ms-4" role="status" aria-hidden="true"></div>
@@ -106,28 +101,29 @@ const Home = () => {
 						{tareas.map((tarea, index) => (
 							<li key={tarea.label} className="list-group-item">
 								{tarea.label}
-								<i title="Borrar" id="iconoTrash" className="fa-solid fa-trash fa-lg mx-4 mt-2" onClick={() => borrarTarea(tarea.label)}></i>
+								<i title="Borrar" id="iconoTrash" className="fa-solid fa-trash fa-lg mx-4 mt-2" onClick={() => borrarTarea(index)}></i>
 								<i title="Marcar como Realizada" id="iconoNOCheck" className="fa-regular fa-circle-check fa-xl  mt-2" onClick={() => check(index)}></i>
 							</li>
 						))}
 					</ul>)}
 
-					<div className="mx-3 my-3" id="contador"> {tareas.length == 1 ? tareas.length + " tarea por realizar 💀 " : tareas.length + " tareas por realizar 💀 "} </div>
+					<div className="mx-3 my-3" id="contador"> {tareas.length == 1 ? tareas.length + " tarea por realizar 😩 " : tareas.length + " tareas por realizar 😩 "} </div>
 				</div>
 
 				<div className="col-6 my-5">
-					<h3> 🕀 Tareas Realizadas 🕀 </h3>
+					<h3>  Tareas Realizadas  </h3>
 
 					<ul className="list-group">
-						{realizadas.map((tarea, index) => (
-							<li key={index} className="list-group-item">
-								{tarea.label}  
-								<i id="iconoTrash" className="fa-solid fa-trash fa-lg mx-4 mt-2" onClick={() => borrarTarea(tarea.label)} ></i>
-								<i title="Tarea Completada" id="iconoCheck" className="fa-regular fa-circle-check fa-xl  mt-2" ></i>
-							</li>
-						))}
+						{tareas.map((tarea, index )=> {
+							return  tarea.done ? (<li key={index} className="list-group-item">
+							{tarea.label}  
+							<i id="iconoTrash"  title="Borrar" className="fa-solid fa-trash fa-lg mx-4 mt-2" onClick={() => borrarTarea(index)} ></i>
+							<i title="Tarea Completada" id="iconoCheck" className="fa-regular fa-circle-check fa-xl  mt-2" ></i>
+						</li>) : null
+							
+						})}
 					</ul>
-					<div className="mx-3 my-3" id="contador"> {realizadas.length == 1 ? realizadas.length + " tarea realizada 😇 " : realizadas.length + " tareas realizadas 😇 "} </div>
+					<div className="mx-3 my-3" id="contador"> {tareas.length == 1 ? tareas.length + " tarea realizada 😀 " : tareas.length + " tareas realizadas 😀 "} </div>
 				</div>
 			</div>
 		</div>
