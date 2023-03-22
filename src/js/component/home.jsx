@@ -10,7 +10,7 @@ const Home = () => {
 	const [inputValue, setInputValue] = useState("");
 	const [tareas, setTareas] = useState([]);
 	const [loading, setLoading] = useState(false);
-
+    
 	const getListado = () => {
 		setLoading(true)
 		fetch(URL, {
@@ -60,10 +60,10 @@ const Home = () => {
 		putTareas(nuevaTarea);
 	}
 
-	const borrarTarea = (index) => {
+	const borrarTarea = (index) => { // estoy trabajando sobre el indice que corresponde al indice del mapeo linea 104 es el index de la 100
 		const newTodo = [...tareas] // si es array u objeto spread operator para poder trabajar sobre esa variable
 		newTodo.splice(index,1) // metodo splice 
-		putTareas(newTodo)  // put al postman  --no se setea por uqe va inplicito en el put el metodo get // setTareas()
+		putTareas(newTodo)  // put al postman  --no se setea por que va inplicito en el put el metodo get // setTareas(data)
 	}
 	const check =  (indice) => {
 		const tareasCompletadas = [...tareas]
@@ -77,34 +77,34 @@ const Home = () => {
 		<div className="container">
 			<div className="row">
 				< Intro />
-
 				<div className="input-group flex-nowrap">
 					<input id="input" className="form-control" type="text" value={inputValue}
 						onChange={(element) => setInputValue(element.target.value)}
-						onKeyDown={(e) => { // en React este paramentro representa el evento de tecla y key es el tipo de tecla 
+						onKeyDown={(e) => { // en React e.key en referencia a teclas 
 							if (e.key === "Enter" && inputValue.length >= 3) {
 								añadirTarea()
-								setInputValue(" ")
+								setInputValue(" ") // despues de añadir la tarea este set le digo que se quede en "blanco" de nuevo 
 							}
 						}
 						}
 						placeholder="Escribe tus tareas pendientes " />
 				</div>
 
-				<div className="col-6 my-5">
+				<div className="col-6 my-5"> 
 
 					<h3> Tareas Pendientes  </h3>
-					{loading ? (<div className="d-flex align-items-center text-light">
+					{loading ? (<div className="d-flex align-items-center text-light"> 
 						<strong>Cargando...</strong>
 						<div className="spinner-border ms-4" role="status" aria-hidden="true"></div>
 					</div>) : (<ul className="list-group">
-						{tareas.map((tarea, index) => (
-							<li key={tarea.label} className="list-group-item">
+						{tareas.map((tarea, index) => { // ternario para loading y dentro un mapeo 
+						return tarea.done ? null : 
+							(<li key={tarea.label} className="list-group-item">
 								{tarea.label}
-								<i title="Borrar" id="iconoTrash" className="fa-solid fa-trash fa-lg mx-4 mt-2" onClick={() => borrarTarea(index)}></i>
+								<i title="Borrar" id="iconoTrash" className="fa-solid fa-trash fa-lg mx-4 mt-2" onClick={() => borrarTarea(index)}></i> 
 								<i title="Marcar como Realizada" id="iconoNOCheck" className="fa-regular fa-circle-check fa-xl  mt-2" onClick={() => check(index)}></i>
-							</li>
-						))}
+							</li>)
+						})}
 					</ul>)}
 
 					<div className="mx-3 my-3" id="contador"> {tareas.length == 1 ? tareas.length + " tarea por realizar 😩 " : tareas.length + " tareas por realizar 😩 "} </div>
@@ -112,18 +112,20 @@ const Home = () => {
 
 				<div className="col-6 my-5">
 					<h3>  Tareas Realizadas  </h3>
-
-					<ul className="list-group">
+					{loading ? (<div className="d-flex align-items-center text-light">
+						<strong>Cargando...</strong>
+						<div className="spinner-border ms-4" role="status" aria-hidden="true"></div>
+					</div>) :
+					(<ul className="list-group">
 						{tareas.map((tarea, index )=> {
-							return  tarea.done ? (<li key={index} className="list-group-item">
+							return  tarea.done  ? (<li key={index} className="list-group-item">
 							{tarea.label}  
 							<i id="iconoTrash"  title="Borrar" className="fa-solid fa-trash fa-lg mx-4 mt-2" onClick={() => borrarTarea(index)} ></i>
 							<i title="Tarea Completada" id="iconoCheck" className="fa-regular fa-circle-check fa-xl  mt-2" ></i>
 						</li>) : null
 							
 						})}
-					</ul>
-					<div className="mx-3 my-3" id="contador"> {tareas.length == 1 ? tareas.length + " tarea realizada 😀 " : tareas.length + " tareas realizadas 😀 "} </div>
+					</ul>)}
 				</div>
 			</div>
 		</div>
